@@ -1,7 +1,10 @@
-# Allegro Hand ZMQ Interface
+# Allegro Hand Interface
 Adapted from https://github.com/simlabrobotics/allegro_hand_linux_v4
 
-This interface allows communication with a v4 Allegro hand via ZMQ on the NUC of a Panda Franka robotic arm.
+## TODO
+
+-  have a class-based API
+
 
 # Required hardware
 1. [Allegro hand v4](http://wiki.wonikrobotics.com/AllegroHandWiki/index.php/Allegro_Hand_v4.0)
@@ -50,20 +53,12 @@ sudo ldconfig
 
 
 ## Installing this interface
-Build using cmake "out of source build" style.
-```bash
-cd allegro_zmq
-mkdir build && cd build
-cmake ..
-make
-make install
+
+
+```
+pip install .
 ```
 
 # Usage
-## Launching the interface
-1. Connect PCAN-USB and Allegro Hand (connect to the NUC of franka robot)
-1. Power on the Allegro Hand.
-1. Start the grasping program: "grasp": `build/bin/grasp` on the NUC. You should see the configuration of your hand print out.
 
-## Controlling via ZMQ
-`ws_control.py` is an example code that runs on a workstation using Python. Make sure to replace `localhost` with the correct IP address of the NUC in this code.
+See `example.py`

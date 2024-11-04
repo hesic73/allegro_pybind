@@ -9,15 +9,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(PYBIND11_FINDPYTHON ON)
 set(pybind11_DIR /home/abrar/hsc/pybind11-2.6.2/build/lib/pybind11/share/cmake/pybind11)
 find_package(pybind11 CONFIG REQUIRED)
+find_package(Eigen3 REQUIRED)  # Find Eigen3
 
 # Define the source files
 set(SOURCES src/main.cpp src/canAPI.cpp)
 
 # Create the Python module with the desired name
-pybind11_add_module(allegro_zmq_pybind ${SOURCES})
+pybind11_add_module(allegro_pybind ${SOURCES})
 
 # Link required libraries
-target_link_libraries(allegro_zmq_pybind PRIVATE BHand pcanbasic pthread ${ZMQ_LIBRARIES})
+target_link_libraries(allegro_pybind PRIVATE BHand pcanbasic pthread Eigen3::Eigen)
 
 # Install the module to the current directory for Python import
-install(TARGETS allegro_zmq_pybind DESTINATION .)
+install(TARGETS allegro_pybind DESTINATION .)

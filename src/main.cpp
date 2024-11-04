@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <pybind11/eigen.h>
+#include <Eigen/Dense>
 #include <vector>
 #include <iostream>
 #include "canAPI.h"
@@ -49,6 +50,16 @@ bool CreateBHandAlgorithm();
 void DestroyBHandAlgorithm();
 void ComputeTorque();
 
+// debug
+static void PrintJointPositions(double q[MAX_DOF])
+{
+    printf("Joint positions:\n");
+    for (int i = 0; i < MAX_DOF; i++)
+    {
+        printf("Joint %d: %f\n", i, q[i]);
+    }
+}
+
 bool start()
 {
     if (!CreateBHandAlgorithm() || !OpenCAN())
@@ -65,34 +76,86 @@ void stop()
     DestroyBHandAlgorithm();
 }
 
-void set_joint_positions(const std::vector<double> &positions)
+void set_joint_positions(const Eigen::VectorXd &positions)
 {
     if (positions.size() != MAX_DOF)
     {
         throw std::runtime_error("Expected position vector size to match MAX_DOF.");
     }
-    for (int i = 0; i < MAX_DOF; i++)
-    {
-        q_des[i] = positions[i];
-    }
+
     if (pBHand)
     {
-        pBHand->SetJointDesiredPosition(q_des);
+        // pBHand->SetMotionType(eMotionType_JOINT_PD);
+        Eigen::Map<Eigen::VectorXd>(q_des, MAX_DOF) = positions;
+        // PrintJointPositions(q_des);
+    }
+    else
+    {
+        printf("pBHand is NULL.\n");
     }
 }
 
-std::vector<double> get_joint_positions()
+void set_pd_gains(const Eigen::VectorXd &kp, const Eigen::VectorXd &kd)
 {
-    std::vector<double> positions(q, q + MAX_DOF);
-    return positions;
+    if (kp.size() != MAX_DOF || kd.size() != MAX_DOF)
+    {
+        throw std::runtime_error("Expected Kp and Kd vector sizes to match MAX_DOF.");
+    }
+
+    if (pBHand)
+    {
+        pBHand->SetGainsEx(const_cast<double *>(kp.data()), const_cast<double *>(kd.data()));
+    }
+    else
+    {
+        printf("pBHand is NULL.\n");
+    }
 }
 
-PYBIND11_MODULE(allegro_zmq_pybind, m)
+void set_motion_type(eMotionType motionType)
+{
+    if (pBHand)
+    {
+        pBHand->SetMotionType(static_cast<int>(motionType));
+    }
+    else
+    {
+        printf("pBHand is NULL.\n");
+    }
+}
+
+Eigen::VectorXd get_joint_positions()
+{
+    // Create an Eigen::VectorXd view of the q array
+    return Eigen::Map<Eigen::VectorXd>(q, MAX_DOF);
+}
+
+PYBIND11_MODULE(allegro_pybind, m)
 {
     m.def("start", &start, "Start the Allegro Hand");
     m.def("stop", &stop, "Stop the Allegro Hand");
     m.def("set_joint_positions", &set_joint_positions, "Set the desired joint positions", py::arg("positions"));
     m.def("get_joint_positions", &get_joint_positions, "Get the current joint positions");
+    m.def("set_pd_gains", &set_pd_gains, "Set the PD gains", py::arg("kp"), py::arg("kd"));
+
+    py::enum_<eMotionType>(m, "eMotionType")
+        .value("NONE", eMotionType_NONE)
+        .value("HOME", eMotionType_HOME)
+        .value("READY", eMotionType_READY)
+        .value("GRAVITY_COMP", eMotionType_GRAVITY_COMP)
+        .value("PRE_SHAPE", eMotionType_PRE_SHAPE)
+        .value("GRASP_3", eMotionType_GRASP_3)
+        .value("GRASP_4", eMotionType_GRASP_4)
+        .value("PINCH_IT", eMotionType_PINCH_IT)
+        .value("PINCH_MT", eMotionType_PINCH_MT)
+        .value("OBJECT_MOVING", eMotionType_OBJECT_MOVING)
+        .value("ENVELOP", eMotionType_ENVELOP)
+        .value("JOINT_PD", eMotionType_JOINT_PD)
+        .value("MOVE_OBJ", eMotionType_MOVE_OBJ)
+        .value("FINGERTIP_MOVING", eMotionType_FINGERTIP_MOVING)
+        .export_values();
+
+    m.def("set_motion_type", &set_motion_type, "Set the motion type", py::arg("motionType"));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
