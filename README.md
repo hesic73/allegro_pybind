@@ -73,11 +73,10 @@ After installing the dependencies, you can build and install the package with:
 pip install .
 ```
 
-# Usage
+## Usage
 
 See `example.py`
 
-
 ## TODO
 
--  have a class-based API
+- thread-safety
