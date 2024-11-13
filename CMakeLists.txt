@@ -7,12 +7,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Enable pybind11's automatic Python detection
 set(PYBIND11_FINDPYTHON ON)
-set(pybind11_DIR /home/abrar/hsc/pybind11-2.6.2/build/lib/pybind11/share/cmake/pybind11)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(Eigen3 REQUIRED)  # Find Eigen3
 
 # Define the source files
 set(SOURCES src/main.cpp src/canAPI.cpp)
+
+# Add the include directory for headers
+include_directories(include)
 
 # Create the Python module with the desired name
 pybind11_add_module(allegro_pybind ${SOURCES})

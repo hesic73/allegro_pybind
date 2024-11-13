@@ -5,3 +5,9 @@ build-backend = "scikit_build_core.build"
 [project]
 name = "allegro_pybind"
 version = "0.1.0"
+authors = [{ name = "Sicheng He", email = "sichengh@usc.edu" }]
+description = "A Python binding for controlling the Allegro Hand."
+
+readme = "README.md"
+
+classifiers = ["Programming Language :: Python :: 3"]
