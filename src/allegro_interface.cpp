@@ -131,7 +131,7 @@ void AllegroInterface::stop()
     }
 }
 
-void AllegroInterface::set_joint_positions(const Eigen::VectorXd &positions)
+void AllegroInterface::set_joint_positions(const Eigen::VectorXd &positions, bool use_delta)
 {
     if (positions.size() != MAX_DOF)
     {
@@ -140,7 +140,16 @@ void AllegroInterface::set_joint_positions(const Eigen::VectorXd &positions)
 
     if (pBHand)
     {
-        Eigen::Map<Eigen::VectorXd>(q_des.data(), MAX_DOF) = positions;
+        Eigen::Map<Eigen::VectorXd> q_des_map(q_des.data(), MAX_DOF);
+        if (use_delta)
+        {
+            Eigen::Map<Eigen::VectorXd> q_map(q.data(), MAX_DOF);
+            q_des_map = q_map + positions;
+        }
+        else
+        {
+            q_des_map = positions;
+        }
     }
     else
     {
@@ -276,11 +285,12 @@ void AllegroInterface::CANCommunication()
                     //     printf("\t>CAN(%d): Joint[%d] Pos (rad) : %5.5f %5.5f %5.5f %5.5f\n"
                     //         , CAN_Ch, i, q[i*4+0], q[i*4+1], q[i*4+2], q[i*4+3]);
                     // }
-                    // printf("joint angles (degrees):\n");
+
+                    // printf("joint des angles (radians):\n");
                     // for (int i=0; i<4; i++)
                     // {
-                    //     printf("\t>CAN(%d): Joint[%d] Pos --- (deg) : %5.5f %5.5f %5.5f %5.5f\n"
-                    //        , CAN_Ch, i, q[i*4+0], q[i*4+1], q[i*4+2], q[i*4+3]);
+                    //     printf("\t>CAN(%d): Joint[%d] Pos (rad) : %5.5f %5.5f %5.5f %5.5f\n"
+                    //         , CAN_Ch, i, q_des[i*4+0], q_des[i*4+1], q_des[i*4+2], q_des[i*4+3]);
                     // }
 
                     // compute joint torque
