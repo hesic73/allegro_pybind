@@ -22,6 +22,7 @@ public:
     void set_pd_gains(const Eigen::VectorXd &kp, const Eigen::VectorXd &kd);
     void set_motion_type(eMotionType motionType);
     Eigen::VectorXd get_joint_positions();
+    Eigen::VectorXd get_target_joint_positions();
 
 private:
     BHand *pBHand;

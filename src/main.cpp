@@ -22,6 +22,8 @@ PYBIND11_MODULE(allegro_pybind, m)
               py::arg("positions"), py::arg("use_delta") = false)
          .def("get_joint_positions", &AllegroInterface::get_joint_positions,
               "Get the current joint positions")
+         .def("get_target_joint_positions", &AllegroInterface::get_target_joint_positions,
+              "Get the target joint positions")
          .def("set_pd_gains", &AllegroInterface::set_pd_gains,
               "Set the PD gains", py::arg("kp"), py::arg("kd"))
          .def("set_motion_type", &AllegroInterface::set_motion_type,

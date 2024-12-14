@@ -42,6 +42,10 @@ if allegro_hand.start():
     current_positions = allegro_hand.get_joint_positions()
     print("Joint positions:", current_positions)
 
+    # Get target joint positions
+    target_joint_positions = allegro_hand.get_target_joint_positions()
+    print("Target joint positions:", target_joint_positions)
+
     # Wait for 1 second
     time.sleep(1)
 

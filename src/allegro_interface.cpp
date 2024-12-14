@@ -191,6 +191,11 @@ Eigen::VectorXd AllegroInterface::get_joint_positions()
     return Eigen::VectorXd(Eigen::Map<Eigen::VectorXd>(q.data(), MAX_DOF));
 }
 
+Eigen::VectorXd AllegroInterface::get_target_joint_positions()
+{
+    return Eigen::VectorXd(Eigen::Map<Eigen::VectorXd>(q_des.data(), MAX_DOF));
+}
+
 void AllegroInterface::ComputeTorque()
 {
     if (!pBHand)

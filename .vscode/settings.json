@@ -4,6 +4,7 @@
         "array": "cpp",
         "cstring": "cpp",
         "cstdio": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "complex": "cpp"
     }
 }
