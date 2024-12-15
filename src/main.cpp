@@ -17,9 +17,14 @@ PYBIND11_MODULE(allegro_pybind, m)
          .def(py::init<>()) // Bind the constructor
          .def("start", &AllegroInterface::start, "Start the Allegro Hand")
          .def("stop", &AllegroInterface::stop, "Stop the Allegro Hand")
-         .def("set_joint_positions", &AllegroInterface::set_joint_positions,
+         .def("set_joint_positions",
+              py::overload_cast<const Eigen::VectorXd &, bool>(&AllegroInterface::set_joint_positions),
               "Set the desired joint positions",
               py::arg("positions"), py::arg("use_delta") = false)
+         .def("set_joint_positions",
+              py::overload_cast<const Eigen::VectorXd &, const Eigen::VectorXd &, bool>(&AllegroInterface::set_joint_positions),
+              "Set the desired joint positions with a mask",
+              py::arg("positions"), py::arg("mask"), py::arg("use_delta") = false)
          .def("get_joint_positions", &AllegroInterface::get_joint_positions,
               "Get the current joint positions")
          .def("get_target_joint_positions", &AllegroInterface::get_target_joint_positions,

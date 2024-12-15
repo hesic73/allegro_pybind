@@ -22,17 +22,22 @@ allegro_hand = ap.AllegroInterface()
 
 # Start the Allegro Hand
 if allegro_hand.start():
-    # Set the motion type
-    allegro_hand.set_motion_type(ap.eMotionType.JOINT_PD)
-
-    # Set PD gains
-    allegro_hand.set_pd_gains(kp, kd)
 
     # Wait for 1 second
     time.sleep(1)
 
+    # Set the motion type
+    allegro_hand.set_motion_type(ap.eMotionType.JOINT_PD)
+
+    initial_hand_joint_positions = allegro_hand.get_joint_positions()
+    allegro_hand.set_joint_positions(initial_hand_joint_positions)
+
+    # Set PD gains
+    allegro_hand.set_pd_gains(kp, kd)
+
     # Set joint positions
     positions = np.zeros(16)  # Create a NumPy array with desired positions
+    positions[12] = 0.4
     allegro_hand.set_joint_positions(positions)
 
     # Wait for 1 second

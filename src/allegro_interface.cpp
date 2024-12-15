@@ -157,6 +157,39 @@ void AllegroInterface::set_joint_positions(const Eigen::VectorXd &positions, boo
     }
 }
 
+void AllegroInterface::set_joint_positions(const Eigen::VectorXd &positions, const Eigen::VectorXd &mask, bool use_delta)
+{
+    if (positions.size() != MAX_DOF || mask.size() != MAX_DOF)
+    {
+        throw std::runtime_error("Expected position and mask vector sizes to match MAX_DOF.");
+    }
+
+    if (pBHand)
+    {
+        Eigen::Map<Eigen::VectorXd> q_des_map(q_des.data(), MAX_DOF);
+        Eigen::Map<Eigen::VectorXd> q_map(q.data(), MAX_DOF);
+
+        for (int i = 0; i < MAX_DOF; ++i)
+        {
+            if (mask[i])
+            {
+                if (use_delta)
+                {
+                    q_des_map[i] = q_map[i] + positions[i];
+                }
+                else
+                {
+                    q_des_map[i] = positions[i];
+                }
+            }
+        }
+    }
+    else
+    {
+        printf("pBHand is NULL.\n");
+    }
+}
+
 void AllegroInterface::set_pd_gains(const Eigen::VectorXd &kp, const Eigen::VectorXd &kd)
 {
     if (kp.size() != MAX_DOF || kd.size() != MAX_DOF)

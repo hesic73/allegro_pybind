@@ -19,6 +19,7 @@ public:
     void stop();
 
     void set_joint_positions(const Eigen::VectorXd &positions, bool use_delta = false);
+    void set_joint_positions(const Eigen::VectorXd &positions, const Eigen::VectorXd &mask, bool use_delta = false);
     void set_pd_gains(const Eigen::VectorXd &kp, const Eigen::VectorXd &kd);
     void set_motion_type(eMotionType motionType);
     Eigen::VectorXd get_joint_positions();
